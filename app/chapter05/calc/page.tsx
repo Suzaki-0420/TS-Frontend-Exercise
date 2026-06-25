@@ -4,17 +4,49 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 export default function CalcPage() {
     // 💡入力中は文字列として扱うため初期値を空文字("")にする
     const [num1, setNum1] = useState<string>("");
     const [num2, setNum2] = useState<string>("");
+    const [operator, setOperator] = useState<string>("1");
     const [result, setResult] = useState<number>(0);
 
     // 計算を実行する関数
     const handleCalculate = () => {
-        // 💡計算するときにNumber()で数値に変換して足し算する
-        setResult(Number(num1) + Number(num2));
+        const n1 = Number(num1);
+        const n2 = Number(num2);
+
+        switch (operator) {
+            case "1": // 加算
+                setResult(n1 + n2);
+                break;
+            case "2": // 減算
+                setResult(n1 - n2);
+                break;
+            case "3": // 乗算
+                setResult(n1 * n2);
+                break;
+            case "4": // 除算
+                setResult(n1 / n2);
+                break;
+            case "5": // 剰余
+                if (n2 === 0) {
+                    setResult(0); // 0で割る場合は結果を0にする（エラー回避）
+                } else {
+                    setResult(n1 % n2);
+                }
+                break;
+            default:
+                setResult(0);
+        }
     };
 
     return (
@@ -33,7 +65,22 @@ export default function CalcPage() {
                 />
             </div>
 
-            <div className="text-center font-bold text-xl">＋</div>
+            {/* プルダウン（Selectコンポーネント） */}
+            <div className="flex justify-center my-4">
+                <Select value={operator} onValueChange={setOperator}>
+                    <SelectTrigger className="w-[140px]">
+                        <SelectValue placeholder="計算方法" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {/* 💡 ポイント: valueの値を "1" 〜 "5" の数字（文字列型）に変更 */}
+                        <SelectItem value="1">+ (加算)</SelectItem>
+                        <SelectItem value="2">- (減算)</SelectItem>
+                        <SelectItem value="3">× (乗算)</SelectItem>
+                        <SelectItem value="4">÷ (除算)</SelectItem>
+                        <SelectItem value="5">% (剰余)</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
 
             {/* 入力エリア 2 */}
             <div className="space-y-2">
@@ -55,7 +102,7 @@ export default function CalcPage() {
             {/* 結果表示エリア */}
             <div className="p-4 bg-muted rounded-lg text-center">
                 <Label>計算結果</Label>
-                <p className="text-3xl font-bold text-primary mt-2">{result}</p>
+                <p className="text-3xl font-bold text-primary mt-2"><span style={{ color: "red" }}>{result}</span></p>
             </div>
         </div>
     );

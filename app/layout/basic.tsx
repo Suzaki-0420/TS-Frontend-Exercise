@@ -2,6 +2,7 @@
  * 演習 3-2 Rootレイアウトを作成する
  * Rootレイアウト（全ページ共通の枠組み）
  */
+
 import "../globals.css";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
@@ -33,6 +34,7 @@ export default function BasicLayout({ children, }: { children: React.ReactNode; 
                             <a href="/chapter04/ex4-1" className="hover:underline">計算機</a>
                             <a href="/chapter04/ex4-2" className="hover:underline">計算機(プルダウン)</a>
                             <a href="/chapter05/calc" className="hover:underline">計算機(shadcn/ui)</a>
+                            <a href="/chapter05/survey" className="hover:underline">選択コンポーネント</a>
                             <a href="/practice" className="hover:underline">練習用</a>
                         </nav>
                     </div>
