@@ -1,3 +1,4 @@
+
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 /**
@@ -8,7 +9,7 @@ export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
             name: "Credentials",
-            // 入力フォームを定義する(APIのキー名に合わせる)
+            // 入力フォームの定義する(APIのキー名に合わせる)
             credentials: {
                 usernameOrEmail: { label: "UsernameorEmail", type: "text" },
                 password: { label: "Password", type: "password" }
@@ -18,7 +19,7 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
                 try {
                     // バックエンドAPIへ認証リクエストを送信
-                    const res = await fetch("http://20.78.35.126/api/auth/login", {
+                    const res = await fetch("http://74.226.194.15/api/auth/login", {
                         method: "POST",
                         // APIの仕様に合わせる
                         body: JSON.stringify({
@@ -43,4 +44,28 @@ export const authOptions: NextAuthOptions = {
             }
         }),
     ],
+    pages: {
+        signIn: '/login', // ログイン画面は自作のものを使用するため、NextAuthのデフォルトUIは無効化
+    },
+    /**
+     * 演習 7-3 取得したJWTをアプリケーション全体で利用可能にする
+     */
+    callbacks: {
+        // トークンの保存処理 (authorizeの戻り値をJWTに書き込む)
+        async jwt({ token, user }) {
+            if (user) {
+                // user(authorizeで返したデータ)をtokenオブジェクトにマージする
+                return { ...token, ...user };
+            }
+            return token;
+        },
+        // セッションの公開処理 (JWTの内容をReactコンポーネントから参照可能にする)
+        async session({ session, token }) {
+            if (session.user) {
+                // token(JWT)に保存されている情報をセッションのuserに詰め替える
+                session.user = token as any;
+            }
+            return session;
+        },
+    },
 };
