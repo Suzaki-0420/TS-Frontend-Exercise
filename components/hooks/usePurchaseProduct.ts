@@ -5,6 +5,8 @@ import { TYPES } from "@/di/types";
 import type { IPurchaseProductService } from "@/interfaces/IPurchaseProductService";
 import type { Product } from "@/models/Product";
 import { useState } from "react";
+import { formatPurchaseSummary } from "@/lib/purchaseFormatter"
+import type { PurchaseSummary } from "@/models/PurchaseSummary";
 
 type CartItem = {
     product: Product;
@@ -32,6 +34,7 @@ export const usePurchaseProduct = () => {
 
     // エラーメッセージ
     const [errorMessage, setErrorMessage] = useState<string>("");
+    const [showFlowerEffect, setShowFlowerEffect] = useState<boolean>(false);
 
     // DIコンテナから購入Serviceを取得
     const purchaseService = container.get<IPurchaseProductService>(
@@ -150,8 +153,10 @@ export const usePurchaseProduct = () => {
             setIsConfirmOpen(false);
 
             setSuccessMessage("商品の購入が完了しました");
+            setShowFlowerEffect(true);
             setTimeout(() => {
                 setSuccessMessage("");
+                setShowFlowerEffect(false);
             }, 3000);
         } catch (error) {
             console.error("商品購入中にエラーが発生しました", error);
@@ -159,6 +164,38 @@ export const usePurchaseProduct = () => {
             setIsConfirmOpen(false);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const copyCartSummary = async () => {
+        try {
+            if (cartItems.length === 0) {
+                setErrorMessage("商品かごに商品がありません");
+                return;
+            }
+
+            const summary: PurchaseSummary = {
+                title: "購入内容",
+                details: cartItems.map(
+                    item =>
+                        `${item.product.name} × ${item.quantity}個`
+                ),
+                totalPrice,
+            };
+
+            const copyText = formatPurchaseSummary(summary);
+
+            await navigator.clipboard.writeText(copyText);
+
+            setSuccessMessage("商品かごの内容をコピーしました");
+
+            setTimeout(() => {
+                setSuccessMessage("");
+            }, 3000);
+
+        } catch (error) {
+            console.error("コピーに失敗しました", error);
+            setErrorMessage("コピーに失敗しました");
         }
     };
 
@@ -170,6 +207,8 @@ export const usePurchaseProduct = () => {
         isConfirmOpen,
         successMessage,
         errorMessage,
+        showFlowerEffect,
+        copyCartSummary,
 
         findAll,
         addCart,

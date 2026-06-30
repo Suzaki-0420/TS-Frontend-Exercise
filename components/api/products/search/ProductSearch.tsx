@@ -11,18 +11,19 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { useSearchProduct } from "@/components/hooks/useSearchProduct";
+import { AlertCircle } from "lucide-react";
 
 /**
- * 演習 6-3 Reactコンポーネントを実装してUIを確認する
+ * 演習 8-7 バックエンドにアクセスするリポジトリを実装して切り替える
  * ユーザーからの入力を受け付け、カスタムフック経由で検索処理を呼び出す
  */
 export const ProductSearch = () => {
 
     // 検索ボックスに入力されたキーワード文字列を保持するローカルState
     const [keyword, setKeyword] = useState<string>("");
-    // カスタムフックから検索結果(products)、ローディング状態(isLoading)、検索実行関数(search)を取得する
-    const { products, isLoading, search } = useSearchProduct();
-    // 検索ボタンがクリックイベントハンドラ
+    // カスタムフックから検索結果(products)、ローディング状態(isLoading)、エラー状態(error)、検索実行関数(search)を取得する
+    const { products, isLoading, error, search } = useSearchProduct();
+    // 検索ボタンのクリックイベントハンドラ
     const handleSearchClick = () => {
         // 入力されているキーワードを引数に渡し、実際の検索処理(ユースケース)を実行する
         search(keyword);
@@ -34,7 +35,7 @@ export const ProductSearch = () => {
     return (
         <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-sm border border-border">
             <h2 className="text-2xl font-bold text-foreground mb-6 text-center border-b pb-4">
-                商品検索 (DIコンテナ確認)
+                商品キーワード検索
             </h2>
 
             {/* 検索入力エリア */}
@@ -54,6 +55,14 @@ export const ProductSearch = () => {
                     {isLoading ? "検索中..." : "検索"}
                 </Button>
             </div>
+
+            {/* エラーメッセージを表示する */}
+            {error && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-md flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
+                    <AlertCircle className="h-5 w-5" />
+                    <span className="font-medium">{error}</span>
+                </div>
+            )}
 
             {/* 検索結果の表示エリア */}
             <div>
@@ -86,7 +95,7 @@ export const ProductSearch = () => {
                                             ￥{product.price.toLocaleString()}
                                         </TableCell>
                                         <TableCell className="text-center">
-                                            <span className="bg-rose-100 text-rose-800 px-2 py-1 rounded-full text-xs">
+                                            <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
                                                 {product.category.name}
                                             </span>
                                         </TableCell>

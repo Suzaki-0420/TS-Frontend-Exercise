@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
                 try {
                     // バックエンドAPIへ認証リクエストを送信
-                    const res = await fetch("http://74.226.194.15/api/auth/login", {
+                    const res = await fetch("http://20.78.35.126/api/auth/login", {
                         method: "POST",
                         // APIの仕様に合わせる
                         body: JSON.stringify({

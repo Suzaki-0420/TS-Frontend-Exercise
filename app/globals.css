@@ -121,10 +121,44 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }
+}
+
+@keyframes flower-bloom {
+  0% {
+    left: 50%;
+    top: 50%;
+    transform:
+      translate(-50%, -50%) rotate(0deg) scale(0);
+    opacity: 1;
+  }
+
+  20% {
+    transform:
+      translate(-50%, -50%) rotate(90deg) scale(1.2);
+  }
+
+  100% {
+    left: calc(50% + cos(var(--angle)) * var(--distance));
+
+    top: calc(50% + sin(var(--angle)) * var(--distance));
+
+    transform:
+      translate(-50%, -50%) rotate(360deg) scale(0.6);
+
+    opacity: 0;
+  }
+}
+
+.flower-particle {
+  position: fixed;
+  font-size: 2rem;
+  animation: flower-bloom 2.5s ease-out forwards;
 }

@@ -21,6 +21,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { usePurchaseProduct } from "@/components/hooks/usePurchaseProduct";
+import { FlowerEffect } from "@/components/api/products/purchase/FlowerEffect";
 
 export const ProductPurchase = () => {
     const {
@@ -31,7 +32,8 @@ export const ProductPurchase = () => {
         isConfirmOpen,
         successMessage,
         errorMessage,
-
+        showFlowerEffect,
+        copyCartSummary,
         findAll,
         addCart,
         removeCart,
@@ -46,6 +48,7 @@ export const ProductPurchase = () => {
     }, []);
 
     return (
+
         <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-sm border border-border">
             <h2 className="text-2xl font-bold text-foreground mb-6 text-center border-b pb-4">
                 商品購入ページ
@@ -100,6 +103,7 @@ export const ProductPurchase = () => {
                     ))}
                 </TableBody>
             </Table>
+            {showFlowerEffect && <FlowerEffect />}
 
             <div className="mt-8 p-4 border rounded-lg space-y-4">
                 <h3 className="text-xl font-bold text-center">
@@ -151,6 +155,12 @@ export const ProductPurchase = () => {
                 <div className="text-right text-lg font-bold">
                     合計金額：{totalPrice.toLocaleString()}円
                 </div>
+                <Button
+                    variant="outline"
+                    onClick={copyCartSummary}
+                >
+                    かごの内容をコピー
+                </Button>
 
                 <div className="flex gap-4">
                     <Button
