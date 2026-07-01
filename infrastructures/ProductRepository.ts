@@ -118,4 +118,110 @@ export class ProductRepository implements IProductRepository {
         // 登録完了後、バックエンドから返却された完全な商品データ(UUID含む)を返す
         return await response.json();
     }
+
+    public async updateProduct(
+        productUuid: string,
+        name: string,
+        price: number
+    ): Promise<Product | null> {
+        const session = await getSession();
+        const token = (session as any)?.user?.token;
+
+        const response = await fetch(`/proxy-api/products/${productUuid}`, {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name,
+                price
+            })
+        });
+
+        if (response.status === 404) {
+            return null;
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+
+            if (errorData.message) {
+                throw new Error(errorData.message);
+            }
+
+            if (errorData.errors) {
+                const messages = Object.values(errorData.errors).flat().join("\n");
+                throw new Error(messages);
+            }
+
+            throw new Error(`商品の更新に失敗しました (Status: ${response.status})`);
+        }
+
+        return await response.json();
+    }
+
+    public async findAll(): Promise<Product[]> {
+        const session = await getSession();
+        const token = (session as any)?.user?.token;
+
+        const response = await fetch("/proxy-api/products/update", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`商品一覧の取得に失敗しました (Status: ${response.status})`);
+        }
+
+        return await response.json();
+    }
+
+    public async purchaseProduct(
+        productUuid: string,
+        quantity: number
+    ): Promise<Product | null> {
+        const session = await getSession();
+        const token = (session as any)?.user?.token;
+
+        const response = await fetch(`/proxy-api/products/purchase`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                quantity
+            })
+        });
+
+        if (response.status === 404) {
+            return null;
+        }
+
+        if (response.status === 409) {
+            return null; // 在庫不足など
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+
+            if (errorData.message) {
+                throw new Error(errorData.message);
+            }
+
+            if (errorData.errors) {
+                const messages = Object.values(errorData.errors).flat().join("\n");
+                throw new Error(messages);
+            }
+
+            throw new Error(`商品の購入に失敗しました (Status: ${response.status})`);
+        }
+
+        return await response.json();
+    }
+
 }

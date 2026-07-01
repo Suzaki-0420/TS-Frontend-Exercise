@@ -1,12 +1,12 @@
 import { injectable } from "inversify";
-import { IProductRepository } from "../interfaces/IProductRepository";
+import { IMockProductRepository } from "../interfaces/IMockProductRepository";
 import { Product } from "../models/Product";
 /**
  * 演習 6-2 データアクセスとサービスを実装する
  * 商品リポジトリの実装(モック)
  */
 @injectable()
-export class MockProductRepository implements IProductRepository {
+export class MockProductRepository implements IMockProductRepository {
 
     // テスト用のダミーデータ（モックデータ）を準備
     private mockProducts: Product[] = [

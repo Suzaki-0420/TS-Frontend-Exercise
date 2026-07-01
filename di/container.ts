@@ -16,6 +16,8 @@ import { IProductCategoryRepository } from "@/interfaces/IProductCategoryReposit
 import { ProductCategoryRepository } from "@/infrastructures/ProductCategoryRepository";
 import { IRegisterProductService } from "@/interfaces/IRegisterProductService";
 import { RegisterProductService } from "@/services/RegisterProductService";
+import { MockProductRepository } from "@/infrastructures/MockProductRepository";
+import { IMockProductRepository } from "@/interfaces/IMockProductRepository";
 
 /**
  * 演習 6-2 データアクセスとサービスを実装する
@@ -26,7 +28,8 @@ const container = new Container();
 // バインディング（登録）設定
 // ---------------------------------------------------------
 // リポジトリの登録(モック版を紐付ける)
-container.bind<IProductRepository>(TYPES.IProductRepository).to(ProductRepository).inSingletonScope();;
+container.bind<IProductRepository>(TYPES.IProductRepository).to(ProductRepository).inSingletonScope();
+container.bind<IMockProductRepository>(TYPES.IMockProductRepository).to(MockProductRepository).inSingletonScope();
 // サービス(ユースケース)の登録
 container.bind<ISearchProductService>(TYPES.ISearchProductService).to(SearchProductService);
 container.bind<IUpdateProductService>(TYPES.IUpdateProductService).to(UpdateProductService);
